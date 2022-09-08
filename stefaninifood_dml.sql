@@ -1,0 +1,53 @@
+-- **** ARQUIVO DML ****
+
+INSERT INTO TB_USUARIO(US_EMAIL,US_SENHA) VALUES ('eduardo@hotmail.com','eduardo123')
+INSERT INTO TB_USUARIO(US_EMAIL,US_SENHA) VALUES ('leonardo@hotmail.com','leonardo123')
+INSERT INTO TB_USUARIO(US_EMAIL,US_SENHA) VALUES ('gabriela@hotmail.com','gabriela123')
+INSERT INTO TB_USUARIO(US_EMAIL,US_SENHA) VALUES ('maria@hotmail.com','maria123')
+
+select * from TB_USUARIO
+
+INSERT INTO TB_CATEGORIA(CA_NOME) VALUES('Carnes'), ('Japonesa'),('Lanches'),('Marmita'),('Padarias'),('Pizza'),('Salgados'),('Saudável'),('Sorvetes'),('Bebidas')
+
+select * from TB_CATEGORIA
+
+INSERT INTO TB_CLIENTE(CLI_NOME,CLI_RG,CLI_CPF,CLI_IDADE,CLI_ENDERECO) VALUES('Eduardo Isidoro Gonçalves','114695532','84225919013',26,'Rua Josefina Ferreira Bonzan')
+INSERT INTO TB_CLIENTE(CLI_NOME,CLI_RG,CLI_CPF,CLI_IDADE,CLI_ENDERECO) VALUES('Leonardo de Lima Junior','241984014','68297338045',120,'Rua São Felipe')
+INSERT INTO TB_CLIENTE(CLI_NOME,CLI_RG,CLI_CPF,CLI_IDADE,CLI_ENDERECO) VALUES('Gabriela Evangelista da Silva de Campos','433253319','67548910096',26,'Rua Margarida Maria Rigoti')
+INSERT INTO TB_CLIENTE(CLI_NOME,CLI_RG,CLI_CPF,CLI_IDADE,CLI_ENDERECO) VALUES('Maria José do Carmo Gonçalves','502877376','36784180070',50,'Rua dos Bioquímicos')
+
+select * from TB_CLIENTE
+
+INSERT INTO TB_LOJA(LO_NOME, LO_RAZAO_SOCIAL, LO_ENDERECO, LO_CNPJ, LO_DATA_REGISTRO) VALUES ('Burguer King','Burguer King Shopping Serra Sul','Rod Juscelino Kubitschek de Oliveira, Br-459 Km - 107', '13574594000196','2011-09-13')
+INSERT INTO TB_LOJA(LO_NOME, LO_RAZAO_SOCIAL, LO_ENDERECO, LO_CNPJ, LO_DATA_REGISTRO) VALUES('McDonald', 'McDonald Shopping Serra Sul', 'Rod Juscelino Kubitschek de Oliveira, Br-459 Km - 107', '42591651000143','2011-07-11')
+INSERT INTO TB_LOJA(LO_NOME, LO_RAZAO_SOCIAL, LO_ENDERECO, LO_CNPJ, LO_DATA_REGISTRO) VALUES('Montana Grill', 'Montana Grill Shopping Serra Sul', 'Rod Juscelino Kubitschek de Oliveira, Br-459 Km - 107', '08056736000193', '2022-11-04')
+INSERT INTO TB_LOJA(LO_NOME, LO_RAZAO_SOCIAL, LO_ENDERECO, LO_CNPJ, LO_DATA_REGISTRO) VALUES('Habibs', 'Habibs','Av. Porfírio Ribeiro de Andrade, 291', '21161562000197', '2022-09-09')
+
+select * from TB_LOJA
+
+ALTER TABLE TB_PRODUTO -- **** ALTERAR O SCRIPT DE CRIACAO
+ALTER COLUMN PR_DESCRICAO
+VARCHAR(80) NULL
+
+INSERT INTO TB_PRODUTO(PR_NOME, PR_DESCRICAO, PR_VALOR, PR_LOJA) VALUES('Whopper','Hambúrguer Whopper, queijo, salada, maionese BK e ketchup', 31.7, 1)
+INSERT INTO TB_PRODUTO(PR_NOME, PR_DESCRICAO, PR_VALOR, PR_LOJA) VALUES('Batata Frita','Batata frita grande ', 8.9, ?)
+INSERT INTO TB_PRODUTO(PR_NOME, PR_DESCRICAO, PR_VALOR, PR_LOJA) VALUES('BK Chicken','BK Chicken 10 Unidades ', 10.9, ?)
+INSERT INTO TB_PRODUTO(PR_NOME, PR_DESCRICAO, PR_VALOR, PR_LOJA) VALUES('Refrigerante','Refrigerante á vontade ', 6.9, ?)
+INSERT INTO TB_PRODUTO(PR_NOME, PR_DESCRICAO, PR_VALOR, PR_LOJA) VALUES('Ovomaltine','Balde de Ovomaltine', 14.9, ?)
+INSERT INTO TB_PRODUTO(PR_NOME, PR_DESCRICAO, PR_VALOR, PR_LOJA) VALUES('BigMac','2 Hambúrgueres Bovinos, Alface, Queijo Cheddar, Picles', 52.8, ?)
+INSERT INTO TB_PRODUTO(PR_NOME, PR_DESCRICAO, PR_VALOR, PR_LOJA) VALUES('Super Montana','2 Hambúrgueres, Alface, Queijo Cheddar, Tomate ', 45.9, ?)
+INSERT INTO TB_PRODUTO(PR_NOME, PR_DESCRICAO, PR_VALOR, PR_LOJA) VALUES('Habibão','1 Hambúrguer, Alface, Queijo Cheddar, Tomate, Bacon', 43.9, ?)
+INSERT INTO TB_PRODUTO(PR_NOME, PR_DESCRICAO, PR_VALOR, PR_LOJA) VALUES('McFritas','McFritas', 15, ?)
+INSERT INTO TB_PRODUTO(PR_NOME, PR_DESCRICAO, PR_VALOR, PR_LOJA) VALUES('Fritas Montana','Fritas Montana 300g', 29.9, ?)
+INSERT INTO TB_PRODUTO(PR_NOME, PR_DESCRICAO, PR_VALOR, PR_LOJA) VALUES('Fritas Habibis','Fritas Habibis com Cheddar e Bacon', 19.9, ?)
+INSERT INTO TB_PRODUTO(PR_NOME, PR_DESCRICAO, PR_VALOR, PR_LOJA) VALUES('Refrigerante','Refrigerante Refil 30min', 14.9, ?)
+INSERT INTO TB_PRODUTO(PR_NOME, PR_DESCRICAO, PR_VALOR, PR_LOJA) VALUES('Refrigerante','Refrigerante Coca Cola 300ml', 11, ?)
+INSERT INTO TB_PRODUTO(PR_NOME, PR_DESCRICAO, PR_VALOR, PR_LOJA) VALUES('Refrigerante','Refrigerante Coca Cola 300ml', 10.9, ?)
+INSERT INTO TB_PRODUTO(PR_NOME, PR_DESCRICAO, PR_VALOR, PR_LOJA) VALUES('Chicken Nuggets','Frango Empanado', 13.9, ?)
+INSERT INTO TB_PRODUTO(PR_NOME, PR_DESCRICAO, PR_VALOR, PR_LOJA) VALUES('Chicken Nuggets','Frango Empanado', 17, ?)
+INSERT INTO TB_PRODUTO(PR_NOME, PR_DESCRICAO, PR_VALOR, PR_LOJA) VALUES('Chicken Nuggets','Frango Empanado', 11.9, ?)
+INSERT INTO TB_PRODUTO(PR_NOME, PR_DESCRICAO, PR_VALOR, PR_LOJA) VALUES('Sorvete','Sorvete Creme', 14.9, ?)
+INSERT INTO TB_PRODUTO(PR_NOME, PR_DESCRICAO, PR_VALOR, PR_LOJA) VALUES('Milk Shake','Mil Shake Morango', 22, ?)
+INSERT INTO TB_PRODUTO(PR_NOME, PR_DESCRICAO, PR_VALOR, PR_LOJA) VALUES('Petit Gateau','Petit Gateau', 25, ?)
+
+select * from TB_PRODUTO
