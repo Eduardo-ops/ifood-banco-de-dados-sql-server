@@ -79,6 +79,7 @@ ADD IT_PEDIDO smallint not null
 
 ALTER TABLE TB_ITEM_PEDIDO
 ADD CONSTRAINT FK_TB_ITEM_PEDIDO_TB_PEDIDO FOREIGN KEY (IT_PEDIDO) REFERENCES TB_PEDIDO(PE_ID)
+ON DELETE CASCADE ON UPDATE CASCADE
 
 ALTER TABLE TB_PRODUTO
 ADD PR_LOJA smallint not null
@@ -104,8 +105,9 @@ ADD CLI_USUARIO INT NOT NULL
 ALTER TABLE TB_CLIENTE
 ADD CONSTRAINT FK_TB_CLIENTE_TB_USUARIO FOREIGN KEY (CLI_USUARIO) REFERENCES TB_USUARIO(US_ID)
 
+
 CREATE TABLE TB_PRODUTO_CATEGORIA(
-	PC_ID SMALLINT NOT NULL,
+	PC_ID SMALLINT IDENTITY(1,1) NOT NULL,
 	PC_PRODUTO SMALLINT NOT NULL,
 	PC_CATEGORIA SMALLINT NOT NULL
 
@@ -138,28 +140,10 @@ BEGIN
 	COMMIT
 END
 
+EXEC sp_remover_pedidos
+
 
 -- **** FUNÇÕES ****
-CREATE FUNCTION fc_faturamento_mes(@mes AS DATE) 
-RETURNS SMALLMONEY
-AS
-BEGIN
-	DECLARE @faturamento SMALLMONEY
-	SELECT @faturamento = SUM(PE_PRECO_TOTAL) FROM TB_PEDIDO
-	WHERE PE_DATA = @mes
-	RETURN @faturamento
-END
-
-CREATE FUNCTION fc_quantidade_pedidos_mes(@mes AS DATE) 
-RETURNS INT
-AS 
-BEGIN
-	DECLARE @quantidade int
-	SELECT @quantidade = COUNT(PE_ID) FROM TB_PEDIDO
-	WHERE PE_DATA = @mes
-	RETURN @quantidade
-END
-
 CREATE FUNCTION fc_validar_email(@email AS VARCHAR(50)) 
 RETURNS BIT
 AS BEGIN
@@ -174,27 +158,60 @@ AS BEGIN
 	RETURN @resultado
 END
 
-select * FROM TB_USUARIO
-WHERE dbo.fc_validar_email('gabriela.evangelista1996@hotmail.com') = 1
-
-CREATE FUNCTION fc_validar_cep(@cep AS CHAR(8))
+CREATE FUNCTION fc_validar_cep(@cep CHAR(8))
 RETURNS BIT
-AS BEGIN
+AS 
+BEGIN
+    DECLARE @tamanhoCep INT
+	DECLARE @caractere CHAR
+	DECLARE @count INT
 
-	DECLARE @tamanhoCep INT
+	SELECT @tamanhoCep = LEN(@cep)
+	SELECT @count = 8
 
-	SET @tamanhoCep = lEN(@cep)
+    IF (@tamanhoCep < 8)
+        RETURN 0
+        
+    WHILE (@count > 0)
+    BEGIN
+         SELECT @caractere = LEFT(@cep,1)
 
-	IF (@tamanhoCep < 8 OR @cep LIKE '%[a-z,-]%')
-		RETURN 0
-
-	RETURN 1
+        IF CHARINDEX(@caractere,'0123456789') = 0
+        BEGIN
+            RETURN 0
+            BREAK
+        END
+        
+        SET @cep = STUFF(@cep,1,1,'')
+		SET @count = @count - 1
+    END
+    
+    RETURN 1
 END
 
-SELECT * FROM TB_CLIENTE
-WHERE dbo.fc_validar_cep('12345678') = 1
+CREATE FUNCTION fc_faturamento_mes(@mes AS SMALLINT) 
+RETURNS SMALLMONEY
+AS
+BEGIN
+	DECLARE @faturamento SMALLMONEY
 
-DROP FUNCTION fc_validar_cep
+	SELECT @faturamento = SUM(PE_PRECO_TOTAL) FROM TB_PEDIDO
+	WHERE DATEPART(MONTH, PE_DATA) = @mes
+
+	RETURN @faturamento
+END
+
+CREATE FUNCTION fc_quantidade_pedidos_mes(@mes AS SMALLINT) 
+RETURNS INT
+AS 
+BEGIN
+	DECLARE @quantidade int
+
+	SELECT @quantidade = COUNT(PE_ID) FROM TB_PEDIDO
+	WHERE DATEPART(MONTH, PE_DATA) = @mes
+
+	RETURN @quantidade
+END
 
 
 -- **** VIEWS ****
@@ -207,10 +224,13 @@ FROM TB_PRODUTO
 INNER JOIN TB_LOJA
 ON TB_PRODUTO.PR_LOJA = TB_LOJA.LO_ID
 
+SELECT *  from vw_produtos_lojas
+ORDER BY LOJA
+
 CREATE VIEW vw_pedidos_clientes_loja
-AS SELECT TB_PEDIDO.PE_ID AS PEDIDO, 
-TB_CLIENTE.CLI_NOME AS CLIENTE, 
-TB_LOJA.LO_NOME AS LOJA
+AS SELECT TB_LOJA.LO_NOME AS LOJA,
+TB_CLIENTE.CLI_NOME AS CLIENTE,
+TB_PEDIDO.PE_ID AS PEDIDO
 FROM TB_PEDIDO
 INNER JOIN TB_CLIENTE
 ON TB_PEDIDO.PE_CLIENTE = TB_CLIENTE.CLI_ID
