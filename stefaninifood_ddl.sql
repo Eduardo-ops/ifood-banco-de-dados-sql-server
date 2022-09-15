@@ -169,32 +169,31 @@ END
 
 CREATE PROCEDURE sp_aumento_comissao_vendedor
 AS
-
-	DECLARE @data DATE
-	DECLARE	@dataRegistroVendedor DATE
 	DECLARE @quantidadeFuncionarios SMALLINT
+	DECLARE @totalVendas SMALLINT
 
 	SET NOCOUNT ON
 
-	SELECT @data = CONVERT(date, GETDATE())
 	SELECT @quantidadeFuncionarios = COUNT(FU_ID) FROM TB_FUNCIONARIOS
 
 	WHILE (@quantidadeFuncionarios > 0)
 	BEGIN
-		SELECT @dataRegistroVendedor = FU_DATA_REGISTRO FROM TB_FUNCIONARIOS WHERE FU_ID = @quantidadeFuncionarios
+		SELECT @totalVendas = FU_TOTAL_VENDAS FROM TB_FUNCIONARIOS WHERE FU_ID = @quantidadeFuncionarios
 
 		BEGIN TRANSACTION
 			UPDATE TB_FUNCIONARIOS
 			SET FU_PERCENTUAL_COMISSAO = FU_PERCENTUAL_COMISSAO + 0.066, FU_TOTAL_VENDAS = 0
-			WHERE FU_ID = 2 AND FU_CARGO = 'Vendedor' AND FU_TOTAL_VENDAS > 59
+			WHERE FU_ID = @quantidadeFuncionarios AND FU_CARGO = 'Vendedor'
 
-			IF (YEAR(@dataRegistroVendedor) = YEAR(@data))
+			IF (@totalVendas <= 59)
 				ROLLBACK
 			ELSE
 				COMMIT
 
 		SET @quantidadeFuncionarios = @quantidadeFuncionarios - 1
 	END
+
+	drop procedure sp_aumento_comissao_vendedor
 
 CREATE PROCEDURE sp_tb_cliente
 	@operacao  NCHAR(1),
