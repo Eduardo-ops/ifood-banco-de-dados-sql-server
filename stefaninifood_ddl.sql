@@ -249,6 +249,36 @@ AS BEGIN
 	END
 END
 
+CREATE PROCEDURE sp_faturamento_mes
+@mes AS SMALLINT 
+AS BEGIN
+	DECLARE @faturamento SMALLMONEY
+
+	SELECT @faturamento = SUM(PE_PRECO_TOTAL) FROM TB_PEDIDO
+	WHERE DATEPART(MONTH, PE_DATA) = @mes
+
+	SELECT * FROM TB_PEDIDO
+	ORDER BY PE_DATA
+
+	SELECT @mes as MES, @faturamento AS FATURAMENTO_MES
+END
+
+CREATE PROCEDURE sp_quantidade_pedidos_mes
+@mes AS SMALLINT
+AS BEGIN
+	DECLARE @quantidade int
+
+	SELECT @quantidade = COUNT(PE_ID) FROM TB_PEDIDO
+	WHERE DATEPART(MONTH, PE_DATA) = @mes
+
+	SELECT * FROM TB_PEDIDO
+	ORDER BY PE_DATA
+
+	SELECT @mes as MES, @quantidade AS PEDIDOS_MES
+END
+
+drop procedure sp_quantidade_pedidos_mes
+
 CREATE FUNCTION fc_validar_email(@email AS VARCHAR(50)) 
 RETURNS BIT
 AS BEGIN
@@ -294,30 +324,6 @@ BEGIN
     END
     
     RETURN 1
-END
-
-CREATE FUNCTION fc_faturamento_mes(@mes AS SMALLINT) 
-RETURNS SMALLMONEY
-AS
-BEGIN
-	DECLARE @faturamento SMALLMONEY
-
-	SELECT @faturamento = SUM(PE_PRECO_TOTAL) FROM TB_PEDIDO
-	WHERE DATEPART(MONTH, PE_DATA) = @mes
-
-	RETURN @faturamento
-END
-
-CREATE FUNCTION fc_quantidade_pedidos_mes(@mes AS SMALLINT) 
-RETURNS INT
-AS 
-BEGIN
-	DECLARE @quantidade int
-
-	SELECT @quantidade = COUNT(PE_ID) FROM TB_PEDIDO
-	WHERE DATEPART(MONTH, PE_DATA) = @mes
-
-	RETURN @quantidade
 END
 
 CREATE VIEW vw_produtos_lojas
