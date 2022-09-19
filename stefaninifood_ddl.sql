@@ -168,25 +168,34 @@ BEGIN
 	END CATCH
 END
 
-DROP PROCEDURE sp_remover_pedidos
-
 CREATE PROCEDURE sp_aumento_comissao_vendedor
 AS
 	DECLARE @quantidadeFuncionarios SMALLINT
+	DECLARE @idFuncionario INT
 	DECLARE @totalVendas SMALLINT
 
 	SET NOCOUNT ON
 
-	SELECT @quantidadeFuncionarios = COUNT(FU_ID) FROM TB_FUNCIONARIOS
+	CREATE TABLE TB_TEMPLATE_FUNCIONARIOS(
+		TF_IDFUNCIONARIO INT NOT NULL,
+		TF_POSICAOID INT IDENTITY(1,1) NOT NULL
+	)
+
+	INSERT INTO TB_TEMPLATE_FUNCIONARIOS
+		SELECT FU_ID 
+		FROM TB_FUNCIONARIOS
+
+	SELECT @quantidadeFuncionarios = COUNT(TF_IDFUNCIONARIO) FROM TB_TEMPLATE_FUNCIONARIOS
 
 	WHILE (@quantidadeFuncionarios > 0)
 	BEGIN
-		SELECT @totalVendas = FU_TOTAL_VENDAS FROM TB_FUNCIONARIOS WHERE FU_ID = @quantidadeFuncionarios
+		SELECT @idFuncionario = TF_IDFUNCIONARIO FROM TB_TEMPLATE_FUNCIONARIOS WHERE TF_POSICAOID = @quantidadeFuncionarios
+		SELECT @totalVendas = FU_TOTAL_VENDAS FROM TB_FUNCIONARIOS WHERE FU_ID = @idFuncionario
 
 		BEGIN TRANSACTION
 			UPDATE TB_FUNCIONARIOS
 			SET FU_PERCENTUAL_COMISSAO = FU_PERCENTUAL_COMISSAO + 0.066, FU_TOTAL_VENDAS = 0
-			WHERE FU_ID = @quantidadeFuncionarios AND FU_CARGO = 'Vendedor'
+			WHERE FU_ID = @idFuncionario AND FU_CARGO = 'Vendedor'
 
 			IF (@totalVendas <= 59)
 				ROLLBACK
@@ -195,6 +204,7 @@ AS
 
 		SET @quantidadeFuncionarios = @quantidadeFuncionarios - 1
 	END
+	DROP TABLE TB_TEMPLATE_FUNCIONARIOS
 
 CREATE PROCEDURE sp_tb_cliente
 	@operacao  NCHAR(1),
@@ -248,6 +258,8 @@ AS BEGIN
 	WHERE @email LIKE '%_@_%_._%'
 	AND @email NOT LIKE '%_@@_%_._%'
 	AND @email NOT LIKE '%..%'
+	AND @email NOT LIKE '%,%'
+	AND @email NOT LIKE '%,,%'
 	AND @email NOT LIKE '%[^a-z,0-9,@,.,_]%'
 
 	RETURN @resultado
