@@ -160,7 +160,7 @@ BEGIN
 	BEGIN TRANSACTION
 		BEGIN TRY
 			DELETE FROM TB_PEDIDO
-			WHERE PE_STATUS_PEDIDO = 'Não confirmado' AND PE_DATA != @data -- adicionar convert
+			WHERE PE_STATUS_PEDIDO = 'Não confirmado' AND CONVERT(date, PE_DATA) != @data
 		COMMIT
 	END TRY
 	BEGIN CATCH
