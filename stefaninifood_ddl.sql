@@ -160,7 +160,7 @@ BEGIN
 	BEGIN TRANSACTION
 		BEGIN TRY
 			DELETE FROM TB_PEDIDO
-			WHERE PE_STATUS_PEDIDO = 'Não confirmado' AND PE_DATA != @data
+			WHERE PE_STATUS_PEDIDO = 'Não confirmado' AND PE_DATA != @data -- adicionar convert
 		COMMIT
 	END TRY
 	BEGIN CATCH
@@ -276,8 +276,6 @@ AS BEGIN
 
 	SELECT @mes as MES, @quantidade AS PEDIDOS_MES
 END
-
-drop procedure sp_quantidade_pedidos_mes
 
 CREATE FUNCTION fc_validar_email(@email AS VARCHAR(50)) 
 RETURNS BIT
